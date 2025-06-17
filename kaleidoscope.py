@@ -1,14 +1,7 @@
-import pygame
-import sys
 import math # New import
 
-# Initialize Pygame
-pygame.init()
-
-# Screen dimensions
+# Screen dimensions (now constants, not Pygame dependent for definition)
 WIDTH, HEIGHT = 800, 600
-SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Interactive Kaleidoscope")
 
 # Colors
 BLACK = (0, 0, 0)
@@ -34,6 +27,14 @@ def rotate_point(point_coords, center_coords, angle_rad):
 
 # --- Main game loop ---
 def main():
+    import pygame # Moved import
+    import sys # Moved import
+
+    # Initialize Pygame & Screen inside main
+    pygame.init()
+    SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+    pygame.display.set_caption("Interactive Kaleidoscope")
+
     running = True
     clicked_points = [] # New list to store points
 
