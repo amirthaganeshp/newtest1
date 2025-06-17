@@ -4,13 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Kaleidoscope</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #111;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+        .info {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+    </style>
+    <!-- Google Fonts for a nice, clean font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <!-- p5.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.js"></script>
 </head>
 <body>
-    <div id="controls">
-        <button id="clearButton">Clear Pattern</button>
+    <!-- The p5.js sketch will be rendered here -->
+    <script>
+        // --- Global Variables ---
+        let symmetry = 8; // Number of symmetrical segments
+        let angle; // Angle between segments
+        let colorHue = 0; // Starting hue for the colors
+
+        /**
+         * The setup function runs once when the program starts.
+         * It's used to define initial environment properties like
+         * screen size and background color.
+         */
+        function setup() {
+            createCanvas(windowWidth, windowHeight);
+            angleMode(DEGREES); // Use degrees for rotation
+            background(10, 10, 12); // Dark background
+
+            // Calculate the angle for each segment
+            angle = 360 / symmetry;
+
+            // Set color mode to HSB (Hue, Saturation, Brightness)
+            // This makes it easy to cycle through colors by changing the hue
+            colorMode(HSB, 360, 100, 100, 100);
+
+            strokeWeight(2);
+        }
+
+        /**
+         * The draw function runs continuously in a loop,
+         * allowing for animation and interaction.
+         */
+        function draw() {
+            // Translate the origin (0,0) to the center of the canvas
+            translate(width / 2, height / 2);
+
+            // Only draw if the mouse is pressed and moving
+            if (mouseIsPressed) {
+                // Get mouse coordinates relative to the center
+                const mx = mouseX - width / 2;
+                const my = mouseY - height / 2;
+
+                // Get previous mouse coordinates relative to the center
+                const pmx = pmouseX - width / 2;
+                const pmy = pmouseY - height / 2;
+
+                // --- Kaleidoscope Drawing Logic ---
+                // This loop creates the symmetrical pattern
+                for (let i = 0; i < symmetry; i++) {
+                    // Rotate the canvas for each segment
+                    rotate(angle);
+
+                    // Update the hue to create a rainbow effect over time
+                    colorHue += 0.5;
+                    if (colorHue > 360) {
+                        colorHue = 0;
+                    }
+
+                    // Set the stroke color
+                    stroke(colorHue, 80, 90, 50); // Bright color with some transparency
+
+                    // Draw a line from the previous to the current mouse position
+                    line(mx, my, pmx, pmy);
+
+                    // --- Create the mirror effect within the segment ---
+                    push(); // Save the current drawing state
+                    scale(1, -1); // Flip the y-axis
+                    line(mx, my, pmx, pmy); // Draw the mirrored line
+                    pop(); // Restore the drawing state
+                }
+            }
+        }
+
+        /**
+         * This function is called whenever any key on the keyboard is pressed.
+         */
+        function keyPressed() {
+            // Clear the background to start a new pattern
+            background(10, 10, 12);
+        }
+
+        /**
+         * This function is called whenever the browser window is resized.
+         */
+        function windowResized() {
+            // Adjust canvas size to fit the new window dimensions
+            resizeCanvas(windowWidth, windowHeight);
+            // Redraw the background
+            background(10, 10, 12);
+        }
+
+    </script>
+    <div class="info">
+        Click and drag your mouse to draw. Press any key to clear.
     </div>
-    <canvas id="kaleidoscopeCanvas"></canvas>
-    <script src="script.js"></script>
 </body>
 </html>
